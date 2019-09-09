@@ -1,7 +1,6 @@
 package au.edu.unimelb.student.mingfengl.ui.login
 
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.view.View
@@ -9,12 +8,20 @@ import android.widget.Button
 import android.widget.VideoView
 import androidx.appcompat.app.AppCompatActivity
 import au.edu.unimelb.student.mingfengl.R
+import android.content.DialogInterface
+import android.app.AlertDialog
+import android.widget.Toast
+
 
 class OfflineMainActivity  : AppCompatActivity(){
 
     val REQUEST_VIDEO_CAPTURE = 1
+    val REQUEST_LOGIN = 2
+
     lateinit var video : VideoView
     lateinit var btn_capture : Button
+    lateinit var btn_cal:Button
+    lateinit var loginIntent: Intent
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_offline_main)
@@ -23,6 +30,27 @@ class OfflineMainActivity  : AppCompatActivity(){
         btn_capture.setOnClickListener{
             dispatchTakeVideoIntent()
         }
+        btn_cal = findViewById(R.id.btn_calculate)
+        btn_cal.setOnClickListener {
+            showListDialog()
+        }
+    }
+
+
+    private fun showListDialog() {
+        val listItems = arrayOf(
+            "Offline",
+            "Online"
+        )
+
+        val listDialog = AlertDialog.Builder(this)
+        listDialog.setTitle("Choose a calculation mode")
+
+        listDialog.setItems(listItems, DialogInterface.OnClickListener { dialogInterface, i ->
+            switchMod(i)
+        })
+
+        listDialog.create().show()
     }
 
 
@@ -39,6 +67,13 @@ class OfflineMainActivity  : AppCompatActivity(){
             }
             video.start()
         }
+        if (requestCode == REQUEST_LOGIN && resultCode == RESULT_OK){
+            Toast.makeText(
+                applicationContext,
+                data?.extras?.getString("username"),
+                Toast.LENGTH_LONG
+            ).show()
+        }
     }
 
 
@@ -47,6 +82,17 @@ class OfflineMainActivity  : AppCompatActivity(){
             takeVideoIntent.resolveActivity(packageManager)?.also {
                 startActivityForResult(takeVideoIntent, REQUEST_VIDEO_CAPTURE)
             }
+        }
+    }
+
+    private fun switchMod(i:Int){
+        if (i==0){
+
+        }
+        if (i==1){
+            this.loginIntent = Intent()
+            loginIntent.setAction("au.edu.login")
+            startActivityForResult(this.loginIntent,REQUEST_LOGIN)
         }
     }
 }

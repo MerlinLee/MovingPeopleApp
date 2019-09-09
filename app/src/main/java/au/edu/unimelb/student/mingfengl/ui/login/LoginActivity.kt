@@ -26,8 +26,10 @@ class LoginActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
-        var intent : Intent = Intent()
-        intent.setAction("au.edu.success.upload")
+        var intent = Intent()
+        var bundle = Bundle()
+
+
         val username = findViewById<EditText>(R.id.username)
         val password = findViewById<EditText>(R.id.password)
         val login = findViewById<Button>(R.id.login)
@@ -59,8 +61,10 @@ class LoginActivity : AppCompatActivity() {
             }
             if (loginResult.success != null) {
                 updateUiWithUser(loginResult.success)
-
+                bundle.putString("username",username.text.toString())
+                bundle.putString("password",password.text.toString())
             }
+            intent.putExtras(bundle)
             setResult(Activity.RESULT_OK,intent)
 
             //Complete and destroy login activity once successful
@@ -105,11 +109,7 @@ class LoginActivity : AppCompatActivity() {
         val welcome = getString(R.string.welcome)
         val displayName = model.displayName
         // TODO : initiate successful logged in experience
-        Toast.makeText(
-            applicationContext,
-            "$welcome $displayName",
-            Toast.LENGTH_LONG
-        ).show()
+
     }
 
     private fun showLoginFailed(@StringRes errorString: Int) {

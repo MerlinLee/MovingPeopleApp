@@ -70,7 +70,7 @@ class OfflineMainActivity  : AppCompatActivity(){
         if (requestCode == REQUEST_LOGIN && resultCode == RESULT_OK){
             Toast.makeText(
                 applicationContext,
-                data?.extras?.getString("username"),
+                data?.extras?.getString("loggedUserData"),
                 Toast.LENGTH_LONG
             ).show()
         }

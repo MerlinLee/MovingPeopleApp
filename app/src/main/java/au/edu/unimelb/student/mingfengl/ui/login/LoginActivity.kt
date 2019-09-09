@@ -17,6 +17,7 @@ import android.widget.ProgressBar
 import android.widget.Toast
 
 import au.edu.unimelb.student.mingfengl.R
+import com.google.gson.Gson
 import okhttp3.OkHttpClient
 
 class LoginActivity : AppCompatActivity() {
@@ -61,8 +62,7 @@ class LoginActivity : AppCompatActivity() {
             }
             if (loginResult.success != null) {
                 updateUiWithUser(loginResult.success)
-                bundle.putString("username",username.text.toString())
-                bundle.putString("password",password.text.toString())
+                bundle.putString("loggedUserData",Gson().toJson(loginResult))
             }
             intent.putExtras(bundle)
             setResult(Activity.RESULT_OK,intent)

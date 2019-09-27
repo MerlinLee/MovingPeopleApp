@@ -10,14 +10,18 @@ import androidx.appcompat.app.AppCompatActivity
 import au.edu.unimelb.student.mingfengl.R
 import android.content.DialogInterface
 import android.app.AlertDialog
-import android.widget.Toast
+import okhttp3.MediaType.Companion.toMediaType
+import java.io.File
+import okhttp3.*
+import java.io.IOException
 
 
 class OfflineMainActivity  : AppCompatActivity(){
 
     val REQUEST_VIDEO_CAPTURE = 1
     val REQUEST_LOGIN = 2
-
+    val VIDEO_TYPE = "video/mp4".toMediaType()
+    lateinit var file: File
     lateinit var video : VideoView
     lateinit var btn_capture : Button
     lateinit var btn_cal:Button
@@ -60,6 +64,7 @@ class OfflineMainActivity  : AppCompatActivity(){
             var videoUri = data?.data
             if (videoUri != null) {
                 video.setVideoPath(videoUri.path)
+                file = File(videoUri.path)
             }
             video.setVideoURI(videoUri)
             if (video.visibility== View.GONE){
@@ -68,11 +73,12 @@ class OfflineMainActivity  : AppCompatActivity(){
             video.start()
         }
         if (requestCode == REQUEST_LOGIN && resultCode == RESULT_OK){
-            Toast.makeText(
-                applicationContext,
-                data?.extras?.getString("loggedUserData"),
-                Toast.LENGTH_LONG
-            ).show()
+//            Toast.makeText(
+//                applicationContext,
+//                data?.extras?.getString("loggedUserData"),
+//                Toast.LENGTH_LONG
+//            ).show()
+            uploadMethod()
         }
     }
 
@@ -95,4 +101,10 @@ class OfflineMainActivity  : AppCompatActivity(){
             startActivityForResult(this.loginIntent,REQUEST_LOGIN)
         }
     }
+
+    private fun uploadMethod(){
+
+    }
+
 }
+

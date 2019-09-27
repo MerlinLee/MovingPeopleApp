@@ -11,4 +11,10 @@
     <string name="login_failed">"Login failed"</string>
     <string name="capture">Capture</string>
     <string name="calculate">Calculate</string>
+    <string name="title_activity_admin_manager">AdminManagerActivity</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+    <string name="title_history">History</string>
+    <string name="title_user">User</string>
 </resources>

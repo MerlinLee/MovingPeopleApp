@@ -20,6 +20,7 @@ class OfflineMainActivity  : AppCompatActivity(){
 
     val REQUEST_VIDEO_CAPTURE = 1
     val REQUEST_LOGIN = 2
+    val REQUEST_ADMIN = 3
     val VIDEO_TYPE = "video/mp4".toMediaType()
     lateinit var file: File
     lateinit var video : VideoView
@@ -78,8 +79,12 @@ class OfflineMainActivity  : AppCompatActivity(){
 //                data?.extras?.getString("loggedUserData"),
 //                Toast.LENGTH_LONG
 //            ).show()
+            this.loginIntent = Intent()
+            loginIntent.setAction("au.edu.success.admin")
+            startActivityForResult(this.loginIntent,REQUEST_ADMIN)
             uploadMethod()
         }
+
     }
 
 

@@ -117,7 +117,7 @@ class LoginActivity : AppCompatActivity() {
                     EditorInfo.IME_ACTION_DONE ->
                         loginViewModel.login(
                             username.text.toString(),
-                            password.text.toString()
+                            password.text.toString(),uiHandler
                         )
                 }
                 false
@@ -129,7 +129,7 @@ class LoginActivity : AppCompatActivity() {
                     kotlin.run {
                         var message = Message()
                         message.what = 1000
-                        loginViewModel.login(username.text.toString(), password.text.toString())
+                        loginViewModel.login(username.text.toString(), password.text.toString(),uiHandler)
                         uiHandler.sendMessage(message)
                     }
                 }).start()

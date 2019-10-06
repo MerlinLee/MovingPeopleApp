@@ -73,7 +73,7 @@
         </activity>
         <activity android:name=".ui.login.RegisterActivity">
             <intent-filter>
-                <action android:name="au.edu.login.register" />
+                <action android:name="au.edu.register" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>

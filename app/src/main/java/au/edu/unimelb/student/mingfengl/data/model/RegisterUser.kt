@@ -1,7 +1,7 @@
 package au.edu.unimelb.student.mingfengl.data.model
 
 data class RegisterUser(
-    var username : String,
-    var password : String,
-    var email:String
+    val username : String,
+    val password : String,
+    val email:String
 )

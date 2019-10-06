@@ -1,40 +1,40 @@
 package au.edu.unimelb.student.mingfengl.data
 
-import android.os.Handler
 import android.util.Log
 import au.edu.unimelb.student.mingfengl.data.model.LoggedInUser
-import au.edu.unimelb.student.mingfengl.data.model.UserPwdPair
+import au.edu.unimelb.student.mingfengl.data.model.RegisterUser
 import au.edu.unimelb.student.mingfengl.services.GlobalApplication
-import com.google.gson.Gson
-import okhttp3.*
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.FormBody
+import okhttp3.OkHttpClient
+import okhttp3.Request
 import java.io.IOException
 import java.lang.Exception
+import java.util.*
 
-/**
- * Class that handles authentication w/ login credentials and retrieves user information.
- */
-class LoginDataSource {
+class RegisterDataSource {
     val client = OkHttpClient()
     var isSuccess:Boolean = false
-    fun login(username: String, password: String,uiHandler: Handler): Result<LoggedInUser> {
-        var loggedInUser = LoggedInUser("","")
+    fun register(username: String, password: String,email:String):Result<RegisterUser> {
+        var registerUser = RegisterUser("", "", "")
         try {
-            var formBody = FormBody.Builder().add("username",username)
-                .add("password",password)
+            var formBody = FormBody.Builder().add("username", username)
+                .add("password", password)
+                .add("email", email)
                 .build()
             var request = Request.Builder()
-                .url(GlobalApplication.getApplication().url+"/login")
+                .url(GlobalApplication.getApplication().url + "/register")
                 .post(formBody)
                 .build()
             var call = client.newCall(request)
             try {
                 var response = call.execute()
-                if(response.isSuccessful){
-                    val content :String = response.body!!.string()
+                if (response.isSuccessful) {
+                    val content: String = response.body!!.string()
                     isSuccess = true
-                    loggedInUser = LoggedInUser(java.util.UUID.randomUUID().toString(),
-                            content)
+                    registerUser = RegisterUser(
+                        "",
+                        content, ""
+                    )
 //                    var serverResult = gson.fromJson(content,LoginResult::class.java)
 //                    if(serverResult.result){
 //                        isSuccess = true
@@ -44,31 +44,27 @@ class LoginDataSource {
 //                    }else{
 //                        isSuccess = false
 //                    }
-                    Log.i("ServerToClient",content)
-                }else{
+                    Log.i("ServerToClient", content)
+                } else {
                     isSuccess = false
-                    Log.i("ServerToClient","unSuccess")
+                    Log.i("ServerToClient", "unSuccess")
                 }//To change body of created functions use File | Settings | File Templates.
 
-            }catch (e:Exception){
-                Log.e("ServerToClient","Error!!!")
+            } catch (e: Exception) {
+                Log.e("ServerToClient", "Error!!!")
             }
-
-            if(isSuccess){
-                return Result.Success(loggedInUser)
-            }else{
+            if (isSuccess) {
+                return Result.Success(registerUser)
+            } else {
                 return Result.Error(IOException())
             }
-
-        } catch (e: Throwable) {
+        }catch (e: Throwable) {
             return Result.Error(IOException("Error logging in", e))
         }
     }
 
+    fun logout(){
 
-    fun logout() {
-        // TODO: revoke authentication
     }
-
 }
 

@@ -27,6 +27,7 @@ import kotlin.concurrent.thread
 class LoginActivity : AppCompatActivity() {
     companion object{
         const val MESSAGE_WHAT = 1000
+        const val REQUEST_REGISTER = 1
     }
 
     private lateinit var loginViewModel: LoginViewModel
@@ -53,7 +54,6 @@ class LoginActivity : AppCompatActivity() {
         var intent = Intent()
         var bundle = Bundle()
 
-
         val username = findViewById<EditText>(R.id.username)
         val password = findViewById<EditText>(R.id.password)
         val login = findViewById<Button>(R.id.login)
@@ -78,7 +78,7 @@ class LoginActivity : AppCompatActivity() {
         })
         register.setOnClickListener {
             this.loginIntent = Intent()
-            loginIntent.setAction("au.edu.login.register")
+            loginIntent.setAction("au.edu.register")
             startActivityForResult(this.loginIntent,REQUEST_REGISTER)
         }
         loginViewModel.loginResult.observe(this@LoginActivity, Observer {
@@ -137,7 +137,13 @@ class LoginActivity : AppCompatActivity() {
         }
 
     }
-
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == REQUEST_REGISTER && resultCode == RESULT_OK){
+            setResult(Activity.RESULT_OK,intent)
+            finish()
+        }
+    }
     private fun updateUiWithUser(model: LoggedInUserView) {
         val welcome = getString(R.string.welcome)
         val displayName = model.displayName
@@ -164,4 +170,6 @@ fun EditText.afterTextChanged(afterTextChanged: (String) -> Unit) {
 
         override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
     })
+
+
 }

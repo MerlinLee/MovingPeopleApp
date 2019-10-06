@@ -5,6 +5,9 @@ import android.content.Intent
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.os.Message
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import android.text.Editable
@@ -19,11 +22,31 @@ import android.widget.Toast
 import au.edu.unimelb.student.mingfengl.R
 import com.google.gson.Gson
 import okhttp3.OkHttpClient
+import kotlin.concurrent.thread
 
 class LoginActivity : AppCompatActivity() {
+    companion object{
+        const val MESSAGE_WHAT = 1000
+    }
 
     private lateinit var loginViewModel: LoginViewModel
+    lateinit var loginIntent: Intent
+    val REQUEST_REGISTER = 1
+    private var uiHandler= object : Handler(Looper.getMainLooper()){
+        override fun handleMessage(msg: Message) {
+            super.handleMessage(msg)
+            when(msg?.what){
+                LoginActivity.MESSAGE_WHAT->{
+                    finish()
+                }
 
+                else->{
+
+                }
+            }
+        }
+
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
@@ -34,6 +57,7 @@ class LoginActivity : AppCompatActivity() {
         val username = findViewById<EditText>(R.id.username)
         val password = findViewById<EditText>(R.id.password)
         val login = findViewById<Button>(R.id.login)
+        val register = findViewById<Button>(R.id.register)
         val loading = findViewById<ProgressBar>(R.id.loading)
 
         loginViewModel = ViewModelProviders.of(this, LoginViewModelFactory())
@@ -52,7 +76,11 @@ class LoginActivity : AppCompatActivity() {
                 password.error = getString(loginState.passwordError)
             }
         })
-
+        register.setOnClickListener {
+            this.loginIntent = Intent()
+            loginIntent.setAction("au.edu.login.register")
+            startActivityForResult(this.loginIntent,REQUEST_REGISTER)
+        }
         loginViewModel.loginResult.observe(this@LoginActivity, Observer {
             val loginResult = it ?: return@Observer
 
@@ -66,9 +94,7 @@ class LoginActivity : AppCompatActivity() {
             }
             intent.putExtras(bundle)
             setResult(Activity.RESULT_OK,intent)
-
             //Complete and destroy login activity once successful
-            finish()
         })
 
         username.afterTextChanged {
@@ -99,7 +125,14 @@ class LoginActivity : AppCompatActivity() {
 
             login.setOnClickListener {
                 loading.visibility = View.VISIBLE
-                loginViewModel.login(username.text.toString(), password.text.toString())
+                Thread(Runnable {
+                    kotlin.run {
+                        var message = Message()
+                        message.what = 1000
+                        loginViewModel.login(username.text.toString(), password.text.toString())
+                        uiHandler.sendMessage(message)
+                    }
+                }).start()
             }
         }
 

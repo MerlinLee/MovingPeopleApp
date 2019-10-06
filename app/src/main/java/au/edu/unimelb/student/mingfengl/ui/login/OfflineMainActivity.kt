@@ -7,13 +7,15 @@ import android.view.View
 import android.widget.Button
 import android.widget.VideoView
 import androidx.appcompat.app.AppCompatActivity
-import au.edu.unimelb.student.mingfengl.R
 import android.content.DialogInterface
 import android.app.AlertDialog
+import android.util.Log
+import au.edu.unimelb.student.mingfengl.R
+import cn.jpush.android.api.JPushInterface
 import okhttp3.MediaType.Companion.toMediaType
 import java.io.File
-import okhttp3.*
-import java.io.IOException
+
+
 
 
 class OfflineMainActivity  : AppCompatActivity(){
@@ -21,6 +23,7 @@ class OfflineMainActivity  : AppCompatActivity(){
     val REQUEST_VIDEO_CAPTURE = 1
     val REQUEST_LOGIN = 2
     val REQUEST_ADMIN = 3
+    val REQUEST_TEST = 4
     val VIDEO_TYPE = "video/mp4".toMediaType()
     lateinit var file: File
     lateinit var video : VideoView
@@ -30,6 +33,10 @@ class OfflineMainActivity  : AppCompatActivity(){
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_offline_main)
+        JPushInterface.setDebugMode(true);
+        JPushInterface.init(getApplicationContext());
+        var rid = JPushInterface.getRegistrationID(getApplicationContext());
+        Log.d("JI GUANG",rid)
         video = findViewById(R.id.view_video)
         btn_capture = findViewById(R.id.btn_capture)
         btn_capture.setOnClickListener{
@@ -98,6 +105,9 @@ class OfflineMainActivity  : AppCompatActivity(){
 
     private fun switchMod(i:Int){
         if (i==0){
+            this.loginIntent = Intent()
+            loginIntent.setAction("au.edu.offline.detect")
+            startActivityForResult(this.loginIntent,REQUEST_LOGIN)
 
         }
         if (i==1){

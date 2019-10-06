@@ -1,14 +1,12 @@
 package au.edu.unimelb.student.mingfengl.data
 
-import android.os.Handler
-import android.os.Message
 import android.util.Log
 import au.edu.unimelb.student.mingfengl.data.model.LoggedInUser
 import au.edu.unimelb.student.mingfengl.data.model.UserPwdPair
+import au.edu.unimelb.student.mingfengl.services.GlobalApplication
 import com.google.gson.Gson
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.internal.wait
 import java.io.IOException
 
 /**
@@ -22,11 +20,10 @@ class LoginDataSource {
     fun login(username: String, password: String): Result<LoggedInUser> {
         var loggedInUser:LoggedInUser = LoggedInUser("","")
         try {
-            // TODO: handle loggedInUser authentication
             var json = gson.toJson(UserPwdPair(username,password))
             var body = RequestBody.create(JSON,json)
             var request = Request.Builder()
-                .url("http://192.168.86.27:8080/login")
+                .url(GlobalApplication.getApplication().url+"/login")
                 .post(body)
                 .build()
             var call = client.newCall(request)
@@ -43,6 +40,7 @@ class LoginDataSource {
                             isSuccess = true
                             loggedInUser = LoggedInUser(java.util.UUID.randomUUID().toString(),
                                 serverResult.displayName)
+                            GlobalApplication.getApplication().cookie = response.headers.get("Set-Cookie")
                         }else{
                             isSuccess = false
                         }
@@ -54,7 +52,7 @@ class LoginDataSource {
                 }
 
             })
-            
+
             if(isSuccess){
                 return Result.Success(loggedInUser)
             }else{

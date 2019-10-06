@@ -4,6 +4,7 @@ import android.os.Handler
 import android.util.Log
 import au.edu.unimelb.student.mingfengl.data.model.LoggedInUser
 import au.edu.unimelb.student.mingfengl.data.model.UserPwdPair
+import au.edu.unimelb.student.mingfengl.networking.NetworkingManager
 import au.edu.unimelb.student.mingfengl.services.GlobalApplication
 import com.google.gson.Gson
 import okhttp3.*
@@ -27,9 +28,9 @@ class LoginDataSource {
                 .url(GlobalApplication.getApplication().url+"/login")
                 .post(formBody)
                 .build()
-            var call = client.newCall(request)
+//            var call = client.newCall(request)
             try {
-                var response = call.execute()
+                var response = NetworkingManager.instance.send(request)
                 if(response.isSuccessful){
                     val content :String = response.body!!.string()
                     isSuccess = true

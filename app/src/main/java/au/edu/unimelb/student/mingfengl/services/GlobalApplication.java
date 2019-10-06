@@ -3,7 +3,7 @@ package au.edu.unimelb.student.mingfengl.services;
 import android.app.Application;
 
 public class GlobalApplication extends Application {
-    private static String url = "http://192.168.43.167:8080";
+    private static String url = "http://10.130.223.11:8080";
 
     private static String cookie;
 

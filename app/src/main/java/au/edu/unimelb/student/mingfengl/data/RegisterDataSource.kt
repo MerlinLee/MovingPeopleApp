@@ -3,6 +3,7 @@ package au.edu.unimelb.student.mingfengl.data
 import android.util.Log
 import au.edu.unimelb.student.mingfengl.data.model.LoggedInUser
 import au.edu.unimelb.student.mingfengl.data.model.RegisterUser
+import au.edu.unimelb.student.mingfengl.networking.NetworkingManager
 import au.edu.unimelb.student.mingfengl.services.GlobalApplication
 import okhttp3.FormBody
 import okhttp3.OkHttpClient
@@ -12,7 +13,6 @@ import java.lang.Exception
 import java.util.*
 
 class RegisterDataSource {
-    val client = OkHttpClient()
     var isSuccess:Boolean = false
     fun register(username: String, password: String,email:String):Result<RegisterUser> {
         var registerUser = RegisterUser("", "", "")
@@ -25,9 +25,8 @@ class RegisterDataSource {
                 .url(GlobalApplication.getApplication().url + "/register")
                 .post(formBody)
                 .build()
-            var call = client.newCall(request)
             try {
-                var response = call.execute()
+                var response = NetworkingManager.instance.send(request)
                 if (response.isSuccessful) {
                     val content: String = response.body!!.string()
                     isSuccess = true
@@ -35,15 +34,6 @@ class RegisterDataSource {
                         "",
                         content, ""
                     )
-//                    var serverResult = gson.fromJson(content,LoginResult::class.java)
-//                    if(serverResult.result){
-//                        isSuccess = true
-//                        loggedInUser = LoggedInUser(java.util.UUID.randomUUID().toString(),
-//                            serverResult.displayName)
-//                        GlobalApplication.getApplication().cookie = response.headers.get("Set-Cookie")
-//                    }else{
-//                        isSuccess = false
-//                    }
                     Log.i("ServerToClient", content)
                 } else {
                     isSuccess = false

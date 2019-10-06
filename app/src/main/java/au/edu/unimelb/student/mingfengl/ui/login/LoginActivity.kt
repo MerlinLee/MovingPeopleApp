@@ -14,10 +14,7 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import android.view.inputmethod.EditorInfo
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ProgressBar
-import android.widget.Toast
+import android.widget.*
 
 import au.edu.unimelb.student.mingfengl.R
 import com.google.gson.Gson
@@ -28,11 +25,12 @@ class LoginActivity : AppCompatActivity() {
     companion object{
         const val MESSAGE_WHAT = 1000
         const val REQUEST_REGISTER = 1
+        const val REQUEST_FORGET = 2
     }
 
     private lateinit var loginViewModel: LoginViewModel
     lateinit var loginIntent: Intent
-    val REQUEST_REGISTER = 1
+    lateinit var forgetIntent: Intent
     private var uiHandler= object : Handler(Looper.getMainLooper()){
         override fun handleMessage(msg: Message) {
             super.handleMessage(msg)
@@ -59,6 +57,8 @@ class LoginActivity : AppCompatActivity() {
         val login = findViewById<Button>(R.id.login)
         val register = findViewById<Button>(R.id.register)
         val loading = findViewById<ProgressBar>(R.id.loading)
+        val forget_password = findViewById<TextView>(R.id.forget_pwd)
+        forget_password.isClickable = true
 
         loginViewModel = ViewModelProviders.of(this, LoginViewModelFactory())
             .get(LoginViewModel::class.java)
@@ -80,6 +80,11 @@ class LoginActivity : AppCompatActivity() {
             this.loginIntent = Intent()
             loginIntent.setAction("au.edu.register")
             startActivityForResult(this.loginIntent,REQUEST_REGISTER)
+        }
+        forget_password.setOnClickListener {
+            this.forgetIntent = Intent()
+            this.forgetIntent.setAction("au.edu.forget")
+            startActivityForResult(this.forgetIntent, REQUEST_FORGET)
         }
         loginViewModel.loginResult.observe(this@LoginActivity, Observer {
             val loginResult = it ?: return@Observer
@@ -134,6 +139,8 @@ class LoginActivity : AppCompatActivity() {
                     }
                 }).start()
             }
+
+
         }
 
     }
@@ -142,6 +149,9 @@ class LoginActivity : AppCompatActivity() {
         if (requestCode == REQUEST_REGISTER && resultCode == RESULT_OK){
             setResult(Activity.RESULT_OK,intent)
             finish()
+        }
+        if (requestCode == REQUEST_FORGET && resultCode == RESULT_OK){
+            onResume()
         }
     }
     private fun updateUiWithUser(model: LoggedInUserView) {

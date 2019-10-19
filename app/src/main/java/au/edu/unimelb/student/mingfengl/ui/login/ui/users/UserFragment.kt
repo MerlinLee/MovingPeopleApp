@@ -7,17 +7,13 @@ import android.os.Message
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.textclassifier.TextLinks
 import android.widget.ImageButton
-import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import au.edu.unimelb.student.mingfengl.R
 import au.edu.unimelb.student.mingfengl.networking.NetworkingManager
 import au.edu.unimelb.student.mingfengl.services.GlobalApplication
-import au.edu.unimelb.student.mingfengl.ui.login.OfflineMainActivity
 import okhttp3.Request
 
 class UserFragment : Fragment(){
@@ -60,7 +56,7 @@ class UserFragment : Fragment(){
         override fun handleMessage(msg: Message) {
             super.handleMessage(msg)
             when(msg?.what){
-                OfflineMainActivity.MESSAGE_WHAT->{
+                MESSAGE_WHAT->{
                     Toast.makeText(GlobalApplication.getContext(), msg.data.get("response").toString(), Toast.LENGTH_SHORT).show()
                 }
 

@@ -3,9 +3,9 @@ package au.edu.unimelb.student.mingfengl.data.model
 import java.util.*
 
 data class HistoryData(
-    var date: String,
-    var time:String,
-    var count:Int,
-    var download:String,
-    var delete:String
+    val date: String,
+    val time:String,
+    val count:Int,
+    val download:String,
+    val delete:String
 )

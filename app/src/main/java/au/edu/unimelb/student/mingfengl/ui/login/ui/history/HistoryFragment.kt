@@ -27,21 +27,14 @@ class HistoryFragment : Fragment() {
 //        private val DATASET_COUNT = 60
     }
 
-    private lateinit var historyViewModel: HistoryViewModel
 //    private lateinit var recyclerView: RecyclerView
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        historyViewModel =
-            ViewModelProviders.of(this).get(HistoryViewModel::class.java)
         val root = inflater.inflate(R.layout.fragment_history, container, false)
         var histories = arrayOf("Merlin","Tom","Cino","Frank")
-//        val textView: TextView = root.findViewById(R.id.text_history)
-//        historyViewModel.text.observe(this, Observer {
-//            textView.text = it
-//        })
         var listView = root.findViewById<ListView>(R.id.history)
         var lisViewAdapter = this.activity?.let { ArrayAdapter<String>(it,android.R.layout.simple_list_item_1,histories) }
         listView.adapter = lisViewAdapter

@@ -4,8 +4,8 @@ import android.app.Application;
 import android.content.Context;
 
 public class GlobalApplication extends Application {
-//    private static String url = "http://45.113.234.163:5000";
-    private static String url = "http://10.13.107.208:8080";
+    private static String url = "http://45.113.234.163:5000";
+//    private static String url = "http://10.13.107.208:8080";
     private static Context mContext;
 
     private static String cookie;

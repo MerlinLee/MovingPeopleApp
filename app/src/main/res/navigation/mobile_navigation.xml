@@ -12,12 +12,6 @@
         tools:layout="@layout/fragment_home" />
 
     <fragment
-        android:id="@+id/navigation_dashboard"
-        android:name="au.edu.unimelb.student.mingfengl.ui.login.ui.dashboard.DashboardFragment"
-        android:label="@string/title_dashboard"
-        tools:layout="@layout/fragment_dashboard" />
-
-    <fragment
         android:id="@+id/navigation_history_list"
         android:name="au.edu.unimelb.student.mingfengl.ui.login.ui.history.HistoryFragment"
         android:label="@string/title_history"

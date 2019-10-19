@@ -152,11 +152,11 @@ class LoginActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == REQUEST_REGISTER && resultCode == RESULT_OK){
-
-            setResult(Activity.RESULT_OK,intent)
-
-
-            finish()
+                //TODO
+//            setResult(Activity.RESULT_OK,intent)
+//
+//
+//            finish()
         }
         if (requestCode == REQUEST_FORGET && resultCode == RESULT_OK){
             onResume()

@@ -22,7 +22,7 @@ class RegisterDataSource {
                 .add("email", email)
                 .build()
             var request = Request.Builder()
-                .url(GlobalApplication.getApplication().url + "/register")
+                .url(GlobalApplication.getApplication().url + "/app/register")
                 .post(formBody)
                 .build()
             try {

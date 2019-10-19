@@ -90,12 +90,12 @@ class HomeFragment : Fragment() {
                     // Permission is not granted
                     var formBody : MultipartBody = MultipartBody
                         .Builder().setType(MultipartBody.FORM)
-                        .addFormDataPart("myfile",file.absolutePath,
+                        .addFormDataPart("file",file.absolutePath,
                             RequestBody.create(VIDEO_TYPE,file))
                         .build()
                     var response = NetworkingManager.instance.send(
                         Request.Builder()
-                            .url(GlobalApplication.getApplication().url+"/api/upload")
+                            .url(GlobalApplication.getApplication().url+"/app/upload")
                             .post(formBody)
                             .build()
                     )

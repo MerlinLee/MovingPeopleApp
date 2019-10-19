@@ -1,5 +1,6 @@
 package au.edu.unimelb.student.mingfengl.ui.login
 
+import android.Manifest
 import android.content.Intent
 import android.os.Bundle
 import android.provider.MediaStore
@@ -9,17 +10,32 @@ import android.widget.VideoView
 import androidx.appcompat.app.AppCompatActivity
 import android.content.DialogInterface
 import android.app.AlertDialog
+import android.net.Uri
+import android.os.Handler
+import android.os.Looper
+import android.os.Message
 import android.util.Log
+import android.widget.Toast
 import au.edu.unimelb.student.mingfengl.R
+import au.edu.unimelb.student.mingfengl.networking.NetworkingManager
+import au.edu.unimelb.student.mingfengl.services.GlobalApplication
 import cn.jpush.android.api.JPushInterface
+import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaType
 import java.io.File
-
-
+import okhttp3.RequestBody
+import android.content.Context
+import android.content.pm.PackageManager
+import android.database.Cursor
+import androidx.core.content.ContextCompat
 
 
 class OfflineMainActivity  : AppCompatActivity(){
-
+    companion object{
+        const val MESSAGE_WHAT = 1000
+        const val REQUEST_REGISTER = 1
+        const val REQUEST_FORGET = 2
+    }
     val REQUEST_VIDEO_CAPTURE = 1
     val REQUEST_LOGIN = 2
     val REQUEST_ADMIN = 3
@@ -27,9 +43,28 @@ class OfflineMainActivity  : AppCompatActivity(){
     val VIDEO_TYPE = "video/mp4".toMediaType()
     lateinit var file: File
     lateinit var video : VideoView
+    lateinit var videoUri : Uri
     lateinit var btn_capture : Button
     lateinit var btn_cal:Button
     lateinit var loginIntent: Intent
+
+    private var uiHandler= object : Handler(Looper.getMainLooper()){
+        override fun handleMessage(msg: Message) {
+            super.handleMessage(msg)
+            when(msg?.what){
+                OfflineMainActivity.MESSAGE_WHAT->{
+                    Toast.makeText(applicationContext, msg.data.get("response").toString(), Toast.LENGTH_SHORT).show()
+                }
+
+                else->{
+
+                }
+            }
+        }
+
+    }
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_offline_main)
@@ -69,10 +104,10 @@ class OfflineMainActivity  : AppCompatActivity(){
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == REQUEST_VIDEO_CAPTURE && resultCode == RESULT_OK) {
-            var videoUri = data?.data
+            videoUri = data?.data!!
             if (videoUri != null) {
                 video.setVideoPath(videoUri.path)
-                file = File(videoUri.path)
+                file = File(getRealPathFromUri(this,videoUri))
             }
             video.setVideoURI(videoUri)
             if (video.visibility== View.GONE){
@@ -105,9 +140,35 @@ class OfflineMainActivity  : AppCompatActivity(){
 
     private fun switchMod(i:Int){
         if (i==0){
-            this.loginIntent = Intent()
-            loginIntent.setAction("au.edu.offline.detect")
-            startActivityForResult(this.loginIntent,REQUEST_LOGIN)
+//            this.loginIntent = Intent()
+//            loginIntent.setAction("au.edu.offline.detect")
+//            startActivityForResult(this.loginIntent,REQUEST_LOGIN)
+
+            Thread(Runnable {
+                if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+                    == PackageManager.PERMISSION_GRANTED) {
+                    // Permission is not granted
+                    var formBody : MultipartBody = MultipartBody
+                        .Builder().setType(MultipartBody.FORM)
+                        .addFormDataPart("myfile",file.absolutePath,RequestBody.create(VIDEO_TYPE,file))
+                        .build()
+                    var response = NetworkingManager.instance.send(
+                        Request.Builder()
+                            .url(GlobalApplication.getApplication().url+"/api/upload")
+                            .post(formBody)
+                            .build()
+                    )
+                    if(response.isSuccessful){
+                        val content :String = response.body!!.string()
+                        var message = Message()
+                        message.what = 1000
+                        message.data.putString("response",content)
+                        uiHandler.sendMessage(message)
+                    }
+                }
+
+
+            }).start()
 
         }
         if (i==1){
@@ -119,6 +180,21 @@ class OfflineMainActivity  : AppCompatActivity(){
 
     private fun uploadMethod(){
 
+    }
+
+    fun getRealPathFromUri(context: Context, contentUri: Uri): String {
+        var cursor: Cursor? = null
+        try {
+            val proj = arrayOf(MediaStore.Images.Media.DATA)
+            cursor = context.getContentResolver().query(contentUri, proj, null, null, null)
+            val column_index = cursor!!.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
+            cursor!!.moveToFirst()
+            return cursor!!.getString(column_index)
+        } finally {
+            if (cursor != null) {
+                cursor!!.close()
+            }
+        }
     }
 
 }

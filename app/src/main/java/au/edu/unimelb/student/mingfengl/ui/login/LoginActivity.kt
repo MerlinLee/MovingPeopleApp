@@ -17,6 +17,8 @@ import android.view.inputmethod.EditorInfo
 import android.widget.*
 
 import au.edu.unimelb.student.mingfengl.R
+import au.edu.unimelb.student.mingfengl.services.GlobalApplication
+import cn.jpush.android.api.JPushInterface
 import com.google.gson.Gson
 import okhttp3.OkHttpClient
 import kotlin.concurrent.thread
@@ -26,6 +28,7 @@ class LoginActivity : AppCompatActivity() {
         const val MESSAGE_WHAT = 1000
         const val REQUEST_REGISTER = 1
         const val REQUEST_FORGET = 2
+        const val REQUEST_ADMIN = 3
     }
 
     private lateinit var loginViewModel: LoginViewModel
@@ -36,11 +39,12 @@ class LoginActivity : AppCompatActivity() {
             super.handleMessage(msg)
             when(msg?.what){
                 LoginActivity.MESSAGE_WHAT->{
-                    finish()
+                    JPushInterface.setAlias(GlobalApplication.getContext(), 0, "merlin");
+                    loginIntent = Intent()
+                    loginIntent.setAction("au.edu.success.admin")
+                    startActivityForResult(loginIntent,REQUEST_ADMIN)
                 }
-
                 else->{
-
                 }
             }
         }
@@ -51,7 +55,8 @@ class LoginActivity : AppCompatActivity() {
         setContentView(R.layout.activity_login)
         var intent = Intent()
         var bundle = Bundle()
-
+        JPushInterface.setDebugMode(true);
+        JPushInterface.init(getApplicationContext());
         val username = findViewById<EditText>(R.id.username)
         val password = findViewById<EditText>(R.id.password)
         val login = findViewById<Button>(R.id.login)
@@ -147,7 +152,10 @@ class LoginActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == REQUEST_REGISTER && resultCode == RESULT_OK){
+
             setResult(Activity.RESULT_OK,intent)
+
+
             finish()
         }
         if (requestCode == REQUEST_FORGET && resultCode == RESULT_OK){

@@ -25,7 +25,7 @@ class LoginDataSource {
                 .add("password",password)
                 .build()
             var request = Request.Builder()
-                .url(GlobalApplication.getApplication().url+"/login")
+                .url(GlobalApplication.getApplication().url+"/app/login")
                 .post(formBody)
                 .build()
 //            var call = client.newCall(request)

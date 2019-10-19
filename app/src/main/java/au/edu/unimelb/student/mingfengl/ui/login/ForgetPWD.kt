@@ -30,6 +30,7 @@ class ForgetPWD  : AppCompatActivity(){
             super.handleMessage(msg)
             when(msg?.what){
                 ForgetPWD.MESSAGE_WHAT->{
+                    Toast.makeText(applicationContext, "Success! Please check your email!", Toast.LENGTH_SHORT).show()
                     finish()
                 }
 
@@ -61,7 +62,7 @@ class ForgetPWD  : AppCompatActivity(){
                         ))
                         var strResponse = response.body!!.string()
                         var msg = Gson().fromJson(strResponse,ServerResponse::class.java)
-                        if (msg.response.equals("True")){
+                        if (msg.code==0){
                             Log.i("Forget Password","Success!!")
                             uiHandler.sendMessage(message)
                         }else{
@@ -79,7 +80,7 @@ class ForgetPWD  : AppCompatActivity(){
     }
     private fun requestBody(formBody:FormBody):Request{
         return Request.Builder()
-            .url(GlobalApplication.getApplication().url+"/forget")
+            .url(GlobalApplication.getApplication().url+"/app/forget")
             .post(formBody)
             .build()
     }

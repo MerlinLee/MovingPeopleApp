@@ -33,9 +33,15 @@ class LoginDataSource {
                 var response = NetworkingManager.instance.send(request)
                 if(response.isSuccessful){
                     val content :String = response.body!!.string()
-                    isSuccess = true
+                    var msg = Gson().fromJson(content,ServerResponse::class.java)
+                    if (msg.code==0){
+                        isSuccess = true
+                    }
+                    if (msg.code==-1){
+                        isSuccess = false
+                    }
                     loggedInUser = LoggedInUser(java.util.UUID.randomUUID().toString(),
-                            content)
+                            msg.errmsg)
 //                    var serverResult = gson.fromJson(content,LoginResult::class.java)
 //                    if(serverResult.result){
 //                        isSuccess = true

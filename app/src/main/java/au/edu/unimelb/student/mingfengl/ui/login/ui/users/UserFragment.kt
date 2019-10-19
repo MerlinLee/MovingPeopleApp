@@ -57,7 +57,8 @@ class UserFragment : Fragment(){
             super.handleMessage(msg)
             when(msg?.what){
                 MESSAGE_WHAT->{
-                    Toast.makeText(GlobalApplication.getContext(), msg.data.get("response").toString(), Toast.LENGTH_SHORT).show()
+                    //Toast.makeText(GlobalApplication.getContext(), msg.data.get("response").toString(), Toast.LENGTH_SHORT).show()
+                    activity!!.finish()
                 }
 
                 else->{

@@ -101,9 +101,10 @@ class LoginActivity : AppCompatActivity() {
             if (loginResult.success != null) {
                 updateUiWithUser(loginResult.success)
                 bundle.putString("loggedUserData",Gson().toJson(loginResult))
+                intent.putExtras(bundle)
+                setResult(Activity.RESULT_OK,intent)
             }
-            intent.putExtras(bundle)
-            setResult(Activity.RESULT_OK,intent)
+
             //Complete and destroy login activity once successful
         })
 
@@ -137,10 +138,9 @@ class LoginActivity : AppCompatActivity() {
                 loading.visibility = View.VISIBLE
                 Thread(Runnable {
                     kotlin.run {
-                        var message = Message()
-                        message.what = 1000
+                        //
                         loginViewModel.login(username.text.toString(), password.text.toString(),uiHandler)
-                        uiHandler.sendMessage(message)
+                       //
                     }
                 }).start()
             }
@@ -166,6 +166,9 @@ class LoginActivity : AppCompatActivity() {
         val welcome = getString(R.string.welcome)
         val displayName = model.displayName
         Toast.makeText(applicationContext, welcome+displayName, Toast.LENGTH_SHORT).show()
+        var message = Message()
+        message.what=1000
+        uiHandler.sendMessage(message)
         // TODO : initiate successful logged in experience
 
     }

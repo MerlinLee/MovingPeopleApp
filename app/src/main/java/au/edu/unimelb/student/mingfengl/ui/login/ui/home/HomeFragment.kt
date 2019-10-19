@@ -15,6 +15,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ProgressBar
 import android.widget.Toast
 import android.widget.VideoView
 import androidx.appcompat.app.AppCompatActivity
@@ -22,8 +23,10 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import au.edu.unimelb.student.mingfengl.R
+import au.edu.unimelb.student.mingfengl.data.ServerResponse
 import au.edu.unimelb.student.mingfengl.networking.NetworkingManager
 import au.edu.unimelb.student.mingfengl.services.GlobalApplication
+import com.google.gson.Gson
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.Request
@@ -43,6 +46,7 @@ class HomeFragment : Fragment() {
     val REQUEST_TEST = 4
     val VIDEO_TYPE = "video/mp4".toMediaType()
     lateinit var file: File
+
     lateinit var video : VideoView
     lateinit var videoUri : Uri
     lateinit var btn_capture : Button
@@ -74,14 +78,16 @@ class HomeFragment : Fragment() {
         homeViewModel =
             ViewModelProviders.of(this).get(HomeViewModel::class.java)
         val root = inflater.inflate(R.layout.fragment_home, container, false)
-        video = root.findViewById(R.id.home_view_video)
+        video = root.findViewById<VideoView>(R.id.home_view_video)
         btn_capture = root.findViewById(R.id.home_btn_capture)
         btn_capture.setOnClickListener{
             dispatchTakeVideoIntent()
         }
         btn_cal = root.findViewById(R.id.home_btn_calculate)
+        val loading = root.findViewById<ProgressBar>(R.id.home_upload_progressBar)
         btn_cal.setOnClickListener {
             Thread(Runnable {
+                loading.visibility = View.VISIBLE
                 if (ContextCompat.checkSelfPermission(GlobalApplication.getContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
                     == PackageManager.PERMISSION_GRANTED) {
                     // Permission is not granted
@@ -97,11 +103,16 @@ class HomeFragment : Fragment() {
                             .build()
                     )
                     if(response.isSuccessful){
+                        loading.visibility = View.GONE
                         val content :String = response.body!!.string()
+                        var server_msg = Gson().fromJson(content,ServerResponse::class.java)
                         var message = Message()
-                        message.what = 1000
-                        message.data.putString("response",content)
-                        uiHandler.sendMessage(message)
+                        if(server_msg.code==0){
+                            message.what = 1000
+                            message.data.putString("response",server_msg.errmsg)
+                            uiHandler.sendMessage(message)
+                        }
+                        loading.visibility = View.GONE
                     }
                 }
 

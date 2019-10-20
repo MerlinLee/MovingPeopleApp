@@ -21,11 +21,11 @@ class HistoriesAdapter (val histories:List<HistoryData>):RecyclerView.Adapter<Hi
     override fun onBindViewHolder(holder: HistoryViewHolder, position: Int) {
 
             val history = histories[position]
-            holder.view.h_time.text = history.time
+            holder.view.h_time.text = history.submit_time
             holder.view.h_count.text = history.count.toString()
-            holder.view.h_download.text = history.download
-            holder.view.h_delete.text = history.delete
-            holder.view.h_date.text = history.date
+            holder.view.h_download.text = history.location
+            holder.view.h_delete.text = history.name
+            holder.view.h_date.text = history.status.toString()
 
     }
 

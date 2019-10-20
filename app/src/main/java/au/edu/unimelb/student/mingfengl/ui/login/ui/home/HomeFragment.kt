@@ -46,7 +46,7 @@ class HomeFragment : Fragment() {
     val REQUEST_TEST = 4
     val VIDEO_TYPE = "video/mp4".toMediaType()
     lateinit var file: File
-
+    lateinit var loading : ProgressBar
     lateinit var video : VideoView
     lateinit var videoUri : Uri
     lateinit var btn_capture : Button
@@ -58,11 +58,12 @@ class HomeFragment : Fragment() {
             super.handleMessage(msg)
             when(msg?.what){
                 MESSAGE_WHAT->{
+                    loading.visibility = View.GONE
                     Toast.makeText(GlobalApplication.getContext(), msg.data.get("response").toString(), Toast.LENGTH_SHORT).show()
                 }
 
                 else->{
-
+                    loading.visibility = View.GONE
                 }
             }
         }
@@ -84,10 +85,12 @@ class HomeFragment : Fragment() {
             dispatchTakeVideoIntent()
         }
         btn_cal = root.findViewById(R.id.home_btn_calculate)
-        val loading = root.findViewById<ProgressBar>(R.id.home_upload_progressBar)
+        loading = root.findViewById<ProgressBar>(R.id.home_upload_progressBar)
+        loading.visibility = View.GONE
         btn_cal.setOnClickListener {
+            loading.visibility = View.VISIBLE
             Thread(Runnable {
-                loading.visibility = View.VISIBLE
+
                 if (ContextCompat.checkSelfPermission(GlobalApplication.getContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
                     == PackageManager.PERMISSION_GRANTED) {
                     // Permission is not granted
@@ -112,7 +115,7 @@ class HomeFragment : Fragment() {
                             message.data.putString("response",server_msg.errmsg)
                             uiHandler.sendMessage(message)
                         }
-                        loading.visibility = View.GONE
+
                     }
                 }
 

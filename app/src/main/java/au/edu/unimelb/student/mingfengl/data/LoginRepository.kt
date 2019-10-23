@@ -1,5 +1,6 @@
 package au.edu.unimelb.student.mingfengl.data
 
+import android.os.Handler
 import au.edu.unimelb.student.mingfengl.data.model.LoggedInUser
 
 /**
@@ -27,9 +28,9 @@ class LoginRepository(val dataSource: LoginDataSource) {
         dataSource.logout()
     }
 
-    fun login(username: String, password: String): Result<LoggedInUser> {
+    fun login(username: String, password: String,uiHandler: Handler): Result<LoggedInUser> {
         // handle login
-        val result = dataSource.login(username, password)
+        val result = dataSource.login(username, password,uiHandler)
 
         if (result is Result.Success) {
             setLoggedInUser(result.data)

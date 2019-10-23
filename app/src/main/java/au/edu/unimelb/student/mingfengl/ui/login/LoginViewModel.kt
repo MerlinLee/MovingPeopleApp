@@ -1,5 +1,7 @@
 package au.edu.unimelb.student.mingfengl.ui.login
 
+import android.os.Handler
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -17,15 +19,20 @@ class LoginViewModel(private val loginRepository: LoginRepository) : ViewModel()
     private val _loginResult = MutableLiveData<LoginResult>()
     val loginResult: LiveData<LoginResult> = _loginResult
 
-    fun login(username: String, password: String) {
+    fun login(username: String, password: String,uiHandler: Handler) {
         // can be launched in a separate asynchronous job
-        val result = loginRepository.login(username, password)
+        val result = loginRepository.login(username, password,uiHandler)
 
         if (result is Result.Success) {
-            _loginResult.value =
-                LoginResult(success = LoggedInUserView(displayName = result.data.displayName))
+            try {
+                _loginResult.postValue( LoginResult(success = LoggedInUserView(displayName = result.data.displayName)))
+
+            }catch (e:Exception){
+                Log.e("LoginViewModel",e.toString())
+            }
+
         } else {
-            _loginResult.value = LoginResult(error = R.string.login_failed)
+            _loginResult.postValue(LoginResult(error = R.string.login_failed))
         }
     }
 
